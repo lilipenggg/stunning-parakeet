@@ -14,33 +14,24 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 	var cursor *ListNode
 	var head *ListNode
 
-	l1Cursor := l1
-	l2Cursor := l2
+	carry := 0
 
-	hasNext := true
-	incrementOne := false
-
-	for hasNext {
+	for l1 != nil || l2 != nil || carry != 0 {
 		prev := cursor
 
 		// compute value for current cursor
 		value := 0
-		if l1Cursor != nil {
-			value = l1Cursor.Val
+		if l1 != nil {
+			value = l1.Val
 		}
-		if l2Cursor != nil {
-			value = value + l2Cursor.Val
+		if l2 != nil {
+			value = value + l2.Val
 		}
+		value += carry
 
-		if incrementOne {
-			value += 1
-			incrementOne = false
-		}
-
-		if value >= 10 {
-			value = int(math.Mod(float64(value), 10))
-			incrementOne = true
-		}
+		// reset carry and value if value is larger than 10
+		carry = int(math.Floor(float64(value / 10)))
+		value = int(math.Mod(float64(value), 10))
 
 		cursor = &ListNode{
 			Val:  value,
@@ -50,20 +41,16 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 		if prev != nil {
 			prev.Next = cursor
 		} else {
+			// record the head of the linked list
 			head = cursor
 		}
 
-		hasNext = (l1Cursor != nil && l1Cursor.Next != nil) || (l2Cursor != nil && l2Cursor.Next != nil) || incrementOne
-
-		if hasNext {
-			// move the two cursors if there are still more nodes in the list
-			if l1Cursor != nil {
-				l1Cursor = l1Cursor.Next
-			}
-
-			if l2Cursor != nil {
-				l2Cursor = l2Cursor.Next
-			}
+		// move the cursors to next ones
+		if l1 != nil {
+			l1 = l1.Next
+		}
+		if l2 != nil {
+			l2 = l2.Next
 		}
 	}
 
